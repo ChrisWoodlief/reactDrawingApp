@@ -11,7 +11,8 @@ export default async function handler(req, res) {
   //   data: {
   //     email: 'cwoodlief6@gmail.com',
   //     name: 'Chris Woodlief',
-  //     id: '1'
+  //     id: '1',
+  //     password: 'hi'
   //   },
   // });
 

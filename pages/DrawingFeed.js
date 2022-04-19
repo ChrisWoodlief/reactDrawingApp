@@ -1,21 +1,56 @@
-import React from 'react'
-export default class DrawingFeed extends React.Component {
-  static async getInitialProps() {
-    return {}
+import React, { useEffect, useState } from "react";
+import { getSession, useSession} from "next-auth/react"
+
+function AuthButton() {
+  const { data: session } = useSession();
+  if(session) {
+    return <>
+      Signed in as {session.user.email} <br/>
+    </>
   }
+  return <>
+    Not signed in <br/>
+  </>
+}
+
+export default class DrawingFeed extends React.Component {
 
   async componentDidMount(){
     try{
+      console.log(`this.props ${JSON.stringify(this.props.user)}`)
+      if(this.props.user){
+        console.log('was a session');
+      }else{
+        console.log('no session');
+      }
       const response = await fetch('/api/hello');
       const data = await response.json();
       console.log(`data: ${JSON.stringify(data)}`);
     }
     catch(error){
-        console.log('componentDidMount error');
+        console.log(`componentDidMount error ${error}`);
     }
   }
 
   render() {
-    return <div>Drawing Feed</div>
+    return (
+      <>
+        <AuthButton/>
+        <div>Drawing Feed</div>
+      </>
+    )
+  }
+}
+
+export async function getServerSideProps(ctx) {
+  const session = await getSession(ctx)
+  if (!session) {
+    return {
+      props: {}
+    }
+  }
+  const { user } = session;
+  return {
+    props: { user },
   }
 }
