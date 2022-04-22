@@ -30,7 +30,7 @@ async function logoutClicked(){
   }
 }
 
-function AuthButton() {
+export function AuthButton() {
   const { data: session } = useSession();
   if(session) {
     return <>

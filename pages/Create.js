@@ -1,7 +1,37 @@
 import React, { useEffect, useState } from "react";
 import Immutable from 'Immutable';
+import {AuthButton} from './Login.js'
 
-export default class DrawArea extends React.Component {
+
+export default function DrawPage(){
+
+  let [currentDrawing, setCurrentDrawing] = useState(null);
+
+  async function saveDrawing(){
+    const response = await fetch('/api/saveDrawing');
+    const data = await response.json();
+    setCurrentDrawing(data.drawing);
+  }
+
+  let currentDrawingInfo;
+  if(currentDrawing){
+    currentDrawingInfo = <div>Drawing is on server. ID: {currentDrawing.id}</div>;
+  }else{
+    currentDrawingInfo = <div>Drawing is not uploaded to server</div>;
+  }
+  return (
+    <>
+      <AuthButton/>
+      <DrawArea/>
+      <div className="drawPageActionsArea">
+        <button onClick={saveDrawing}>Save Drawing</button>
+        {currentDrawingInfo}
+      </div>
+    </>
+  )
+}
+
+class DrawArea extends React.Component {
   constructor() {
     super();
 
@@ -70,7 +100,9 @@ export default class DrawArea extends React.Component {
         onMouseDown={this.handleMouseDown}
         onMouseMove={this.handleMouseMove}
       >
-        <Drawing lines={this.state.lines} />
+        <Drawing
+          lines={this.state.lines}
+        />
       </div>
     );
   }
@@ -78,7 +110,7 @@ export default class DrawArea extends React.Component {
 
 function Drawing({ lines }) {
   return (
-    <svg className="drawing">
+    <svg className="innerDrawing">
       {lines.map((line, index) => (
         <DrawingLine key={index} line={line} />
       ))}

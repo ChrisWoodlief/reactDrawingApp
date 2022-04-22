@@ -1,17 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getSession, useSession} from "next-auth/react"
-
-function AuthButton() {
-  const { data: session } = useSession();
-  if(session) {
-    return <>
-      Signed in as {session.user.email} <br/>
-    </>
-  }
-  return <>
-    Not signed in <br/>
-  </>
-}
+import {AuthButton} from './Login.js'
 
 export default class DrawingFeed extends React.Component {
 

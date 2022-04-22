@@ -36,18 +36,17 @@ export default NextAuth({
 
         // If no error and we have user data, return it
         if (userById) {
-          // debug
           return {
             name: userById.name,
-            email: userById.email
+            email: userById.email,
+            id: userById.id
           };
         }
 
         // Return null if user data could not be retrieved
         return null;
       },
-    }),
-    // ...add more providers here
+    })
   ],
   pages: {
     //signIn: "/Login",
@@ -63,6 +62,7 @@ export default NextAuth({
   callbacks: {
     async session({ session, token, user }) {
       session.ta_token = token.ta_token;
+      session.userId = token.sub; //todo look into why the id is on the token as "sub"
       return session;
     },
     async jwt({ token, user }) {
