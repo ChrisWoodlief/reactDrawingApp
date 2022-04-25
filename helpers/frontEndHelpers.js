@@ -23,7 +23,7 @@ export function msToTime(s) {
     returnString += `${secs} ${secs>1 ? 'seconds ' : 'second '}`;
   }
   if(ms){
-    returnString += `${ms} ${ms>1 ? 'milliseconds ' : 'millisecond '}`;
+    returnString += `${ms} ms`;
   }
   return returnString;
 }

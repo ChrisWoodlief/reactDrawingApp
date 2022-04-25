@@ -28,7 +28,7 @@ model Drawing {
   updatedAt  DateTime @updatedAt @map("updated_at")
 
   strokes Stroke[]
-  user    User @relation(fields: [userId], references: [id])
+  user    User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("drawings")
 }
@@ -40,7 +40,7 @@ model Stroke {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  drawing   Drawing @relation(fields: [drawingId], references: [id])
+  drawing   Drawing @relation(fields: [drawingId], references: [id], onDelete: Cascade)
 
   @@map("strokes")
 }
