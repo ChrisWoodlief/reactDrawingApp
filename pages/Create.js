@@ -6,17 +6,30 @@ import ColorSelector from '../components/colorSelector'
 
 export default function DrawPage(){
 
-  let [currentDrawing, setCurrentDrawing] = useState(null);
-  let [currentColor, setCurrentColor] = useState('black');
+  const [currentDrawing, setCurrentDrawing] = useState(null);
+  const [currentColor, setCurrentColor] = useState('black');
+  const [firstStrokeTime, setFirstStrokeTime] = useState(null);
 
   async function saveDrawing(){
-    const response = await fetch('/api/saveDrawing');
+    const drawTimeMS = new Date() - firstStrokeTime;
+    const response = await fetch('/api/saveDrawing', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({drawTimeMS})
+    });
     const data = await response.json();
     setCurrentDrawing(data.drawing);
   }
 
   function colorUpdated(updatedColor){
     setCurrentColor(updatedColor);
+  }
+
+  function firstStrokeTimeUpdated(updatedFirstStrokeTime){
+    setFirstStrokeTime(updatedFirstStrokeTime);
   }
 
   let currentDrawingInfo;
@@ -28,7 +41,7 @@ export default function DrawPage(){
   return (
     <>
       <AuthButton/>
-      <DrawArea currentColor={currentColor} />
+      <DrawArea currentColor={currentColor} firstStrokeTime={firstStrokeTime} firstStrokeTimeUpdated={firstStrokeTimeUpdated} />
       <div className="drawPageActionsArea">
         <ColorSelector colorUpdated={colorUpdated}/>
         <button onClick={saveDrawing}>Save Drawing</button>
@@ -50,9 +63,7 @@ function DrawArea(props) {
   const [currentColor, setCurrentColor] = useState('black');
   const [lines, setLines] = useState(new Immutable.List());
   const [currentPointCount, setCurrentPointCount] = useState(0);
-  const [firstStrokeTime, setFirstStrokeTime] = useState(null);
   const drawAreaRef = useRef(null);
-
 
   function handleMouseDown(mouseEvent) {
     if (mouseEvent.button != 0) {
@@ -62,7 +73,7 @@ function DrawArea(props) {
     const point = relativeCoordinatesForEvent(mouseEvent);
 
     if(lines.size == 0){
-      setFirstStrokeTime(Date.now());
+      props.firstStrokeTimeUpdated(Date.now());
     }
     setIsDrawing(true);
     setLines((prevLines) => {

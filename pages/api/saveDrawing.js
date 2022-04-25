@@ -4,16 +4,16 @@ import { PrismaClient } from '@prisma/client';
 import { getSession } from "next-auth/react"
 
 export default async function handler(req, res) {
+  //const body = JSON.parse(req.body);
   const session = await getSession({ req })
-  let prisma = new PrismaClient();
+  const prisma = new PrismaClient();
 
   // Create a drawing
   const drawing = await prisma.drawing.create({
     data: {
-      userId: session.userId,
-      drawTimeMS: 123
+      userId: '1',
+      drawTimeMS: req.body.drawTimeMS
     },
   });
-
-  res.status(200).json({ drawing });
+  return res.status(200).json({ drawing });
 }
