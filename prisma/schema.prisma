@@ -15,6 +15,8 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  drawings Drawing[]
+
   @@map("users")
 }
 
@@ -25,6 +27,9 @@ model Drawing {
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
+  strokes Stroke[]
+  user    User @relation(fields: [userId], references: [id])
+
   @@map("drawings")
 }
 
@@ -34,6 +39,8 @@ model Stroke {
   lineData  String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+
+  drawing   Drawing @relation(fields: [drawingId], references: [id])
 
   @@map("strokes")
 }

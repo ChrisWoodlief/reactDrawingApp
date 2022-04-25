@@ -15,5 +15,18 @@ export default async function handler(req, res) {
       drawTimeMS: req.body.drawTimeMS
     },
   });
+
+  const strokes = req.body.strokes.map((currentStroke) => {
+    return {
+      drawingId: drawing.id,
+      lineData: currentStroke.lineData
+    }
+  });
+
+  //array with {drawingId, lineData (as a string), strokeColor, strokeWidth}
+  const createMany = await prisma.stroke.createMany({
+    data: strokes
+  })
+
   return res.status(200).json({ drawing });
 }

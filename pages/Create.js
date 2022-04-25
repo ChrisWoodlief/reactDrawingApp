@@ -9,19 +9,50 @@ export default function DrawPage(){
   const [currentDrawing, setCurrentDrawing] = useState(null);
   const [currentColor, setCurrentColor] = useState('black');
   const [firstStrokeTime, setFirstStrokeTime] = useState(null);
+  const [strokes, setStrokes] = useState(new Immutable.List());
 
   async function saveDrawing(){
     const drawTimeMS = new Date() - firstStrokeTime;
+
+    //Translate strokes into format for db
+    const strokesForDb = strokes.map((currentStroke) => {
+      const pointsString = '';
+      currentStroke.points.forEach((currentPoint) => {
+        if(pointsString != ''){
+          pointsString += ';';
+        }
+        pointsString += `${currentPoint.get('x')},${currentPoint.get('y')}`;
+      });
+      return {
+        //color: currentStroke.color, todochris add back when this is on db
+        lineData: pointsString
+      };
+    });
     const response = await fetch('/api/saveDrawing', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({drawTimeMS})
+      body: JSON.stringify({drawTimeMS, strokes: strokesForDb})
     });
     const data = await response.json();
     setCurrentDrawing(data.drawing);
+  }
+
+  function addStroke(newStroke){
+    setStrokes((prevStrokes) => {
+      return prevStrokes.push(newStroke);
+    });
+  }
+
+  function addPoint(newPoint){
+    setStrokes((prevStrokes) => {
+      return prevStrokes.updateIn([prevStrokes.size - 1], (line) => {
+        line.points = line.points.push(newPoint);
+        return line;
+      });
+    });
   }
 
   function colorUpdated(updatedColor){
@@ -41,7 +72,7 @@ export default function DrawPage(){
   return (
     <>
       <AuthButton/>
-      <DrawArea currentColor={currentColor} firstStrokeTime={firstStrokeTime} firstStrokeTimeUpdated={firstStrokeTimeUpdated} />
+      <DrawArea currentColor={currentColor} strokes={strokes} addStroke={addStroke} addPoint={addPoint} firstStrokeTime={firstStrokeTime} firstStrokeTimeUpdated={firstStrokeTimeUpdated} />
       <div className="drawPageActionsArea">
         <ColorSelector colorUpdated={colorUpdated}/>
         <button onClick={saveDrawing}>Save Drawing</button>
@@ -52,7 +83,7 @@ export default function DrawPage(){
 }
 
 
-/** lines
+/** strokes
 {
   points,
   color
@@ -61,7 +92,6 @@ export default function DrawPage(){
 function DrawArea(props) {
   const [isDrawing, setIsDrawing] = useState(false);
   const [currentColor, setCurrentColor] = useState('black');
-  const [lines, setLines] = useState(new Immutable.List());
   const [currentPointCount, setCurrentPointCount] = useState(0);
   const drawAreaRef = useRef(null);
 
@@ -72,13 +102,11 @@ function DrawArea(props) {
 
     const point = relativeCoordinatesForEvent(mouseEvent);
 
-    if(lines.size == 0){
+    if(props.strokes.size == 0){
       props.firstStrokeTimeUpdated(Date.now());
     }
     setIsDrawing(true);
-    setLines((prevLines) => {
-      return prevLines.push({points: new Immutable.List([point]), color: props.currentColor});
-    });
+    props.addStroke({points: new Immutable.List([point]), color: props.currentColor});
   }
 
   function handleMouseMove(mouseEvent) {
@@ -88,12 +116,7 @@ function DrawArea(props) {
 
     const point = relativeCoordinatesForEvent(mouseEvent);
 
-    setLines((prevLines) => {
-      return prevLines.updateIn([prevLines.size - 1], (line) => {
-        line.points = line.points.push(point);
-        return line;
-      });
-    });
+    props.addPoint(point);
     setCurrentPointCount((lastPointCount) => {
       return lastPointCount + 1;
     })
@@ -131,30 +154,30 @@ function DrawArea(props) {
     >
       <Drawing
         key={currentPointCount}
-        lines={lines}
+        strokes={props.strokes}
       />
     </div>
   );
 }
 
-function Drawing({ lines }) {
+function Drawing({ strokes }) {
   return (
     <svg className="innerDrawing">
-      {lines.map((line, index) => (
-        <DrawingLine key={index} line={line} />
+      {strokes.map((stroke, index) => (
+        <DrawingLine key={index} stroke={stroke} />
       ))}
     </svg>
   );
 }
 
-function DrawingLine({ line, color }) {
+function DrawingLine({ stroke, color }) {
   const pathData =
     "M " +
-    line.points
+    stroke.points
       .map((p) => {
         return `${p.get("x")} ${p.get("y")}`;
       })
       .join(" L ");
   //console.log(`pathData ${pathData}`);
-  return <path className="path" d={pathData} stroke={line.color} />;
+  return <path className="path" d={pathData} stroke={stroke.color} />;
 }
