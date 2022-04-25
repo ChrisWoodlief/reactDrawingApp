@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Immutable from 'Immutable';
 import {AuthButton} from './Login.js'
 import ColorSelector from '../components/colorSelector'
@@ -45,94 +45,85 @@ export default function DrawPage(){
   color
 }
 **/
-let firstStrokeTime;
-class DrawArea extends React.Component {
-  constructor(props) {
-    super();
+function DrawArea(props) {
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [currentColor, setCurrentColor] = useState('black');
+  const [lines, setLines] = useState(new Immutable.List());
+  const [currentPointCount, setCurrentPointCount] = useState(0);
+  const [firstStrokeTime, setFirstStrokeTime] = useState(null);
+  const drawAreaRef = useRef(null);
 
-    this.state = {
-      lines: new Immutable.List(),
-      isDrawing: false
-    };
 
-    this.handleMouseDown = this.handleMouseDown.bind(this);
-    this.handleMouseMove = this.handleMouseMove.bind(this);
-    this.handleMouseUp = this.handleMouseUp.bind(this);
-  }
-
-  componentDidMount() {
-    document.addEventListener("mouseup", this.handleMouseUp);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener("mouseup", this.handleMouseUp);
-  }
-
-  handleMouseDown(mouseEvent) {
+  function handleMouseDown(mouseEvent) {
     if (mouseEvent.button != 0) {
       return;
     }
 
-    const point = this.relativeCoordinatesForEvent(mouseEvent);
+    const point = relativeCoordinatesForEvent(mouseEvent);
 
-    if(this.state.lines.size == 0){
-      console.log('first stroke recorded!');
-      firstStrokeTime = Date.now();
+    if(lines.size == 0){
+      setFirstStrokeTime(Date.now());
     }
-    this.setState((prevState) => ({
-      lines: prevState.lines.push({points: new Immutable.List([point]), color: this.props.currentColor}),
-      isDrawing: true
-    }));
+    setIsDrawing(true);
+    setLines((prevLines) => {
+      return prevLines.push({points: new Immutable.List([point]), color: props.currentColor});
+    });
   }
 
-  handleMouseMove(mouseEvent) {
-    if (!this.state.isDrawing) {
+  function handleMouseMove(mouseEvent) {
+    if (!isDrawing) {
       return;
     }
 
-    const point = this.relativeCoordinatesForEvent(mouseEvent);
+    const point = relativeCoordinatesForEvent(mouseEvent);
 
-    this.setState((prevState) => ({
-      lines: prevState.lines.updateIn([prevState.lines.size - 1], (line) => {
+    setLines((prevLines) => {
+      return prevLines.updateIn([prevLines.size - 1], (line) => {
         line.points = line.points.push(point);
         return line;
-      }
-      )
-    }));
+      });
+    });
+    setCurrentPointCount((lastPointCount) => {
+      return lastPointCount + 1;
+    })
   }
 
-  handleMouseUp() {
-    this.setState({ isDrawing: false });
+  function handleMouseUp() {
+    setIsDrawing(false);
   }
 
-  componentDidUpdate(newProps) {
-    if(newProps.currentColor !== this.props.currentColor){
-      this.setState(newProps);
-    }
-  }
-
-  relativeCoordinatesForEvent(mouseEvent) {
-    const boundingRect = this.refs.drawArea.getBoundingClientRect();
+  function relativeCoordinatesForEvent(mouseEvent) {
+    const boundingRect = drawAreaRef.current.getBoundingClientRect();
     return new Immutable.Map({
       x: mouseEvent.clientX - boundingRect.left,
       y: mouseEvent.clientY - boundingRect.top
     });
   }
 
-  render() {
-    return (
-      <div
-        className="drawArea"
-        ref="drawArea"
-        onMouseDown={this.handleMouseDown}
-        onMouseMove={this.handleMouseMove}
-      >
-        <Drawing
-          lines={this.state.lines}
-        />
-      </div>
-    );
-  }
+  useEffect(() => {
+    document.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  });
+
+  useEffect(() => {
+    setCurrentColor(props.color);
+  }, [props.currentColor]);
+
+  return (
+    <div
+      className="drawArea"
+      ref={drawAreaRef}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+    >
+      <Drawing
+        key={currentPointCount}
+        lines={lines}
+      />
+    </div>
+  );
 }
 
 function Drawing({ lines }) {
