@@ -10,7 +10,8 @@ export default async function handler(req, res) {
   // Create a drawing
   const drawing = await prisma.drawing.create({
     data: {
-      userId: session.userId
+      userId: session.userId,
+      drawTimeMS: 123
     },
   });
 

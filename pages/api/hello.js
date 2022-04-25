@@ -7,14 +7,14 @@ export default async function handler(req, res) {
   prisma = new PrismaClient();
 
   // Create a user
-  // const user = await prisma.user.create({
-  //   data: {
-  //     email: 'cwoodlief6@gmail.com',
-  //     name: 'Chris Woodlief',
-  //     id: '1',
-  //     password: 'hi'
-  //   },
-  // });
+  const user = await prisma.user.create({
+    data: {
+      email: 'cwoodlief6@gmail.com',
+      name: 'Chris Woodlief',
+      id: '1',
+      password: 'hi'
+    },
+  });
 
   //get a user
   const userById = await prisma.user.findUnique({

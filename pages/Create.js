@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
 import Immutable from 'Immutable';
 import {AuthButton} from './Login.js'
+import ColorSelector from '../components/colorSelector'
 
 
 export default function DrawPage(){
 
   let [currentDrawing, setCurrentDrawing] = useState(null);
+  let [currentColor, setCurrentColor] = useState('black');
 
   async function saveDrawing(){
     const response = await fetch('/api/saveDrawing');
     const data = await response.json();
     setCurrentDrawing(data.drawing);
+  }
+
+  function colorUpdated(updatedColor){
+    setCurrentColor(updatedColor);
   }
 
   let currentDrawingInfo;
@@ -22,8 +28,9 @@ export default function DrawPage(){
   return (
     <>
       <AuthButton/>
-      <DrawArea/>
+      <DrawArea currentColor={currentColor} />
       <div className="drawPageActionsArea">
+        <ColorSelector colorUpdated={colorUpdated}/>
         <button onClick={saveDrawing}>Save Drawing</button>
         {currentDrawingInfo}
       </div>
@@ -31,8 +38,16 @@ export default function DrawPage(){
   )
 }
 
+
+/** lines
+{
+  points,
+  color
+}
+**/
+let firstStrokeTime;
 class DrawArea extends React.Component {
-  constructor() {
+  constructor(props) {
     super();
 
     this.state = {
@@ -60,8 +75,12 @@ class DrawArea extends React.Component {
 
     const point = this.relativeCoordinatesForEvent(mouseEvent);
 
+    if(this.state.lines.size == 0){
+      console.log('first stroke recorded!');
+      firstStrokeTime = Date.now();
+    }
     this.setState((prevState) => ({
-      lines: prevState.lines.push(new Immutable.List([point])),
+      lines: prevState.lines.push({points: new Immutable.List([point]), color: this.props.currentColor}),
       isDrawing: true
     }));
   }
@@ -74,14 +93,22 @@ class DrawArea extends React.Component {
     const point = this.relativeCoordinatesForEvent(mouseEvent);
 
     this.setState((prevState) => ({
-      lines: prevState.lines.updateIn([prevState.lines.size - 1], (line) =>
-        line.push(point)
+      lines: prevState.lines.updateIn([prevState.lines.size - 1], (line) => {
+        line.points = line.points.push(point);
+        return line;
+      }
       )
     }));
   }
 
   handleMouseUp() {
     this.setState({ isDrawing: false });
+  }
+
+  componentDidUpdate(newProps) {
+    if(newProps.currentColor !== this.props.currentColor){
+      this.setState(newProps);
+    }
   }
 
   relativeCoordinatesForEvent(mouseEvent) {
@@ -118,14 +145,14 @@ function Drawing({ lines }) {
   );
 }
 
-function DrawingLine({ line }) {
+function DrawingLine({ line, color }) {
   const pathData =
     "M " +
-    line
+    line.points
       .map((p) => {
         return `${p.get("x")} ${p.get("y")}`;
       })
       .join(" L ");
-  console.log(`pathData ${pathData}`);
-  return <path className="path" d={pathData} />;
+  //console.log(`pathData ${pathData}`);
+  return <path className="path" d={pathData} stroke={line.color} />;
 }
