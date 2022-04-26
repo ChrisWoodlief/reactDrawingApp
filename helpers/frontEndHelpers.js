@@ -43,8 +43,7 @@ export function translateServerStrokesToFrontEnd(serverStrokes){
       const [x, y] = points.split(',');
       pointsList = pointsList.push(new Immutable.Map({x,y}));
     });
-    returnList = returnList.push({points: pointsList/*, color: props.currentColor*/}); //todo add this in when data is on server
+    returnList = returnList.push({points: pointsList, color: serverStroke.strokeColor, width: serverStroke.strokeWidth});
   });
-  debugger;
   return returnList;
 }

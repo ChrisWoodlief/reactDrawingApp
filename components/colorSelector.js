@@ -6,15 +6,12 @@ let colors = ['black', 'red', 'blue', 'green', 'yellow'];
 
 export default function ColorSelector(props){
 
-  let [currentColor, setCurrentColor] = useState('black');
-
   function handleClick(event){
-    setCurrentColor(event.target.value);
     props.colorUpdated(event.target.value);
   }
 
   const listItems = colors.map((color) =>
-    <Button variant="secondary" value={color} className={color == currentColor ? 'active': ''}>{color}</Button>
+    <Button variant="secondary" value={color} className={color == props.currentColor ? 'active': ''}>{color}</Button>
   );
 
   return (

@@ -4,12 +4,12 @@ import Immutable from 'Immutable';
 /** strokes
 {
   points,
-  color
+  color,
+  width
 }
 **/
 export default function DrawArea(props) {
   const [isDrawing, setIsDrawing] = useState(false);
-  const [currentColor, setCurrentColor] = useState('black');
   const [currentPointCount, setCurrentPointCount] = useState(0);
   const drawAreaRef = useRef(null);
 
@@ -24,7 +24,7 @@ export default function DrawArea(props) {
       props.firstStrokeTimeUpdated(Date.now());
     }
     setIsDrawing(true);
-    props.addStroke({points: new Immutable.List([point]), color: props.currentColor});
+    props.addStroke({points: new Immutable.List([point]), color: props.currentColor, width: props.currentWidth});
   }
 
   function handleMouseMove(mouseEvent) {
@@ -58,10 +58,6 @@ export default function DrawArea(props) {
       document.removeEventListener("mouseup", handleMouseUp);
     };
   });
-
-  useEffect(() => {
-    setCurrentColor(props.color);
-  }, [props.currentColor]);
 
   return (
     <div
@@ -97,5 +93,5 @@ function DrawingLine({ stroke, color }) {
       })
       .join(" L ");
   //console.log(`pathData ${pathData}`);
-  return <path className="path" d={pathData} stroke={stroke.color} />;
+  return <path className="path" d={pathData} stroke={stroke.color} strokeWidth={stroke.width} />;
 }

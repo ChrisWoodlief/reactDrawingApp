@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
 import Immutable from 'Immutable';
-import {AuthButton} from './Login.js'
-import ColorSelector from '../components/colorSelector'
-import DrawArea from '../components/drawArea'
+import {AuthButton} from './Login.js';
+import ColorSelector from '../components/colorSelector';
+import WidthSelector from '../components/widthSelector';
+import DrawArea from '../components/drawArea';
 
 export default function DrawPage(){
 
   const [currentDrawing, setCurrentDrawing] = useState(null);
   const [currentColor, setCurrentColor] = useState('black');
+  const [currentWidth, setCurrentWidth] = useState();
   const [firstStrokeTime, setFirstStrokeTime] = useState(null);
   const [strokes, setStrokes] = useState(new Immutable.List());
 
@@ -24,7 +26,8 @@ export default function DrawPage(){
         pointsString += `${currentPoint.get('x')},${currentPoint.get('y')}`;
       });
       return {
-        //color: currentStroke.color, todochris add back when this is on db
+        strokeColor: currentStroke.color,
+        strokeWidth: currentStroke.width,
         lineData: pointsString
       };
     });
@@ -59,6 +62,10 @@ export default function DrawPage(){
     setCurrentColor(updatedColor);
   }
 
+  function widthUpdated(updatedWidth){
+    setCurrentWidth(updatedWidth);
+  }
+
   function firstStrokeTimeUpdated(updatedFirstStrokeTime){
     setFirstStrokeTime(updatedFirstStrokeTime);
   }
@@ -72,9 +79,10 @@ export default function DrawPage(){
   return (
     <>
       <AuthButton/>
-      <DrawArea currentColor={currentColor} strokes={strokes} addStroke={addStroke} addPoint={addPoint} firstStrokeTime={firstStrokeTime} firstStrokeTimeUpdated={firstStrokeTimeUpdated} />
+      <DrawArea currentColor={currentColor} currentWidth={currentWidth} strokes={strokes} addStroke={addStroke} addPoint={addPoint} firstStrokeTime={firstStrokeTime} firstStrokeTimeUpdated={firstStrokeTimeUpdated} />
       <div className="drawPageActionsArea">
-        <ColorSelector colorUpdated={colorUpdated}/>
+        <ColorSelector colorUpdated={colorUpdated} currentColor={currentColor}/>
+        <WidthSelector widthUpdated={widthUpdated} currentWidth={currentWidth}/>
         <button onClick={saveDrawing}>Save Drawing</button>
         {currentDrawingInfo}
       </div>

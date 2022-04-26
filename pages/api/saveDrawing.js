@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   // Create a drawing
   const drawing = await prisma.drawing.create({
     data: {
-      userId: '1',
+      userId: session.userId,
       drawTimeMS: req.body.drawTimeMS
     },
   });
@@ -19,7 +19,9 @@ export default async function handler(req, res) {
   const strokes = req.body.strokes.map((currentStroke) => {
     return {
       drawingId: drawing.id,
-      lineData: currentStroke.lineData
+      lineData: currentStroke.lineData,
+      strokeColor: currentStroke.strokeColor,
+      strokeWidth: currentStroke.strokeWidth
     }
   });
 

@@ -42,8 +42,9 @@ export default function DrawingFeed(props) {
   };
 
   const drawingFeedItems = drawings.map((drawing) => {
+    const showDeleteButton = (props.signedInUserId == drawing.userId);
     return (
-      <DrawingFeedItem drawing={drawing} deleteClicked={deleteClicked}/>
+      <DrawingFeedItem drawing={drawing} deleteClicked={deleteClicked} showDeleteButton={showDeleteButton}/>
     )
   });
 
@@ -60,6 +61,10 @@ export default function DrawingFeed(props) {
 
 function DrawingFeedItem(props){
   let frontEndStrokes = translateServerStrokesToFrontEnd(props.drawing.strokes);
+  let deleteButton;
+  if(props.showDeleteButton){
+    deleteButton = <Button variant="danger" value={props.drawing.id} onClick={(event) => {props.deleteClicked(event.target.value)}}>Delete Drawing</Button>;
+  }
 
   return (
     <ListGroup.Item>
@@ -72,7 +77,7 @@ function DrawingFeedItem(props){
       <p>User Name: {props.drawing.user.name}</p>
       <p>User Email: {props.drawing.user.email}</p>
       <DrawArea strokes={frontEndStrokes}/>
-      <Button variant="danger" value={props.drawing.id} onClick={(event) => {props.deleteClicked(event.target.value)}}>Delete Drawing</Button>
+      {deleteButton}
     </ListGroup.Item>
   )
 }
@@ -86,8 +91,8 @@ export async function getServerSideProps(ctx) {
       props: {}
     }
   }
-  const { user } = session;
+  const { user, userId } = session;
   return {
-    props: { user },
+    props: { user, signedInUserId: userId },
   }
 }
