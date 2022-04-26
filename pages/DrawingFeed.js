@@ -3,9 +3,11 @@ import { getSession, useSession} from "next-auth/react"
 import {AuthButton} from './Login.js'
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button'
-import {msToTime} from '../helpers/frontEndHelpers'
+import {msToTime, translateServerStrokesToFrontEnd} from '../helpers/frontEndHelpers'
 import Moment from 'react-moment';
 import 'moment-timezone';
+import DrawArea from '../components/drawArea'
+import Immutable from 'Immutable';
 
 export default function DrawingFeed(props) {
   const [drawings, setDrawings] = useState([]);
@@ -57,6 +59,8 @@ export default function DrawingFeed(props) {
 }
 
 function DrawingFeedItem(props){
+  let frontEndStrokes = translateServerStrokesToFrontEnd(props.drawing.strokes);
+
   return (
     <ListGroup.Item>
       <p>Creation Date and Time:&nbsp;
@@ -67,6 +71,7 @@ function DrawingFeedItem(props){
       <p>Draw Time: {msToTime(props.drawing.drawTimeMS)}</p>
       <p>User Name: {props.drawing.user.name}</p>
       <p>User Email: {props.drawing.user.email}</p>
+      <DrawArea strokes={frontEndStrokes}/>
       <Button variant="danger" value={props.drawing.id} onClick={(event) => {props.deleteClicked(event.target.value)}}>Delete Drawing</Button>
     </ListGroup.Item>
   )

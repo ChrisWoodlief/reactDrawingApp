@@ -1,3 +1,5 @@
+import Immutable from 'Immutable';
+
 export function msToTime(s) {
   // Pad to 2 or 3 digits, default is 2
   function pad(n, z) {
@@ -26,4 +28,23 @@ export function msToTime(s) {
     returnString += `${ms} ms`;
   }
   return returnString;
+}
+
+export function translateServerStrokesToFrontEnd(serverStrokes){
+  let returnList = new Immutable.List();
+
+  if(!serverStrokes){
+    return returnList;
+  }
+  serverStrokes.forEach((serverStroke) => {
+    const pointsArray = serverStroke.lineData.split(';');
+    let pointsList = new Immutable.List();
+    pointsArray.forEach((points) => {
+      const [x, y] = points.split(',');
+      pointsList = pointsList.push(new Immutable.Map({x,y}));
+    });
+    returnList = returnList.push({points: pointsList/*, color: props.currentColor*/}); //todo add this in when data is on server
+  });
+  debugger;
+  return returnList;
 }
