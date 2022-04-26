@@ -76,7 +76,7 @@ function DrawingFeedItem(props){
       <p>Draw Time: {msToTime(props.drawing.drawTimeMS)}</p>
       <p>User Name: {props.drawing.user.name}</p>
       <p>User Email: {props.drawing.user.email}</p>
-      <DrawArea strokes={frontEndStrokes}/>
+      <DrawArea strokes={frontEndStrokes} isThumbnail={true} sideLength="100px"/>
       {deleteButton}
     </ListGroup.Item>
   )

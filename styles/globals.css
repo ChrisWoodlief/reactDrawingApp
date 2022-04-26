@@ -41,6 +41,11 @@ a {
   height:300px;
 }
 
+.innerDrawing.isThumbnail{
+  width:120px;
+  height:120px;
+}
+
 .btn:focus {
   outline: none;
   box-shadow: none;
