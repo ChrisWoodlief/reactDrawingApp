@@ -5,19 +5,21 @@ import {DRAW_AREA_ERASER_STRING} from '../helpers/frontEndHelpers';
 
 let colors = ['Black', 'Red', 'Blue', 'Green', 'Yellow', DRAW_AREA_ERASER_STRING];
 
-export default function ColorSelector(props){
+export default function ColorSelector({colorUpdated, currentColor='Black'}){
 
-  if(!props.currentColor){
-    props.colorUpdated('Black');
-  }
+  //Inform the parent of the color on first render, since default may have changed it
+  useEffect(() => {
+    colorUpdated(currentColor);
+  }, []);
 
   function handleClick(event){
-    props.colorUpdated(event.target.value);
+    colorUpdated(event.target.value);
   }
 
-  const listItems = colors.map((color) =>
-    <Button variant="secondary" value={color} className={color == props.currentColor ? 'active': ''}>{color}</Button>
-  );
+  const listItems = colors.map((color) => {
+    const buttonInside = (color == DRAW_AREA_ERASER_STRING) ? 'Erase' : <div className='colorSelectorPreviewBox' style={{ backgroundColor: color}}></div>;
+    return <Button key={color} variant="secondary" value={color} className={color == currentColor ? 'active': ''}>{buttonInside}</Button>;
+  });
 
   return (
     <ButtonGroup aria-label="Basic example" onClick={handleClick}>

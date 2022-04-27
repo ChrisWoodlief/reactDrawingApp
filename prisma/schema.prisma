@@ -24,6 +24,7 @@ model Drawing {
   id         String   @id @default(cuid())
   userId     String
   drawTimeMS Int
+  isPrivate  Boolean
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 

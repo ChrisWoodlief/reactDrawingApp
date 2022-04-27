@@ -12,7 +12,8 @@ export default async function handler(req, res) {
   const drawing = await prisma.drawing.create({
     data: {
       userId: session.userId,
-      drawTimeMS: req.body.drawTimeMS
+      drawTimeMS: req.body.drawTimeMS,
+      isPrivate: req.body.isPrivate
     },
   });
 

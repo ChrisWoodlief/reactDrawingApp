@@ -6,35 +6,6 @@ import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 
-
-async function loginClicked(){
-  try{
-    const res = await signIn('credentials', {
-      redirect: false,
-      username: 'cwoodlief6@gmail.com', //todoChris get from page
-      password: 'password', //todoChris get from page
-      callbackUrl: `${window.location.origin}`
-    });
-    console.log(`res ${JSON.stringify(res)}`);
-  }catch(err){
-    console.log(err);
-  }
-}
-
-async function logoutClicked(){
-  try{
-    const res = await signOut('credentials', {
-      redirect: false,
-      email: 'cwoodlief6@gmail.com', //todoChris get from page
-      password: 'password', //todoChris get from page
-      callbackUrl: `${window.location.origin}`
-    });
-    console.log(`res ${JSON.stringify(res)}`);
-  }catch(err){
-    console.log(err);
-  }
-}
-
 export function DrawingAppNavbar() {
   const { data: session } = useSession();
   let [navbarTitleText, setNavbarTitleText] = useState('');
@@ -90,25 +61,4 @@ export function DrawingAppNavbar() {
       </Container>
     </Navbar>
   )
-}
-
-
-export default class Login extends React.Component {
-  static async getInitialProps() {
-    return {}
-  }
-  render() {
-    return (
-      <>
-        <DrawingAppNavbar/>
-        <button onClick={loginClicked}>
-          Login
-        </button>
-
-        <button onClick={logoutClicked}>
-          Logout
-        </button>
-      </>
-    )
-  }
 }

@@ -4,18 +4,19 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
 let widths = ['3', '6', '12', '24'];
 
-export default function WidthSelector(props){
+export default function WidthSelector({widthUpdated, currentWidth='6'}){
 
-  if(!props.currentWidth){
-    props.widthUpdated('6');
-  }
+  //Inform the parent of the width on first render, since default may have changed it
+  useEffect(() => {
+    widthUpdated(currentWidth);
+  }, []);
 
   function handleClick(event){
-    props.widthUpdated(event.target.value);
+    widthUpdated(event.target.value);
   }
 
   const listItems = widths.map((width) =>
-    <Button variant="secondary" value={width} className={width == props.currentWidth ? 'active': ''}>{width}</Button>
+    <Button key={width} variant="secondary" value={width} className={width == currentWidth ? 'active': ''}>{width}</Button>
   );
 
   return (

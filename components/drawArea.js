@@ -21,7 +21,6 @@ export default function DrawArea(props) {
         const pointX = currentPoint.get('x');
         const pointY = currentPoint.get('y');
         const pixelsBetween = distanceBetweenTwoPoints(x, y, pointX, pointY);
-        console.log(`pixelsBetween: ${pixelsBetween} - currentStroke.width/2: ${currentStroke.width/2}`);
         if(pixelsBetween <= (currentStroke.width/2) + 1){ //plus one pixel to add a little extra room to erase
           return true;
         }

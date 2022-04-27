@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getSession, useSession} from "next-auth/react"
-import {DrawingAppNavbar} from './Login.js'
+import {DrawingAppNavbar} from '../components/drawingAppNavbar.js';
+import FullScreenPageText from '../components/fullScreenPageText.js';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button'
 import {msToTime, translateServerStrokesToFrontEnd} from '../helpers/frontEndHelpers'
@@ -12,16 +13,19 @@ import Immutable from 'Immutable';
 export default function DrawingFeed(props) {
   const [drawings, setDrawings] = useState([]);
 
-  useEffect(async () => {
-    const response = await fetch('/api/getDrawings', {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    });
-    const data = await response.json();
-    setDrawings(data.drawings);
+  useEffect(() => {
+    async function getData(){
+      const response = await fetch('/api/getDrawings', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await response.json();
+      setDrawings(data.drawings);
+    }
+    getData();
   }, []);
 
   async function deleteClicked(drawingToDeleteId){
@@ -44,16 +48,21 @@ export default function DrawingFeed(props) {
   const drawingFeedItems = drawings.map((drawing) => {
     const showDeleteButton = (props.signedInUserId == drawing.userId);
     return (
-      <DrawingFeedItem drawing={drawing} deleteClicked={deleteClicked} showDeleteButton={showDeleteButton}/>
+      <DrawingFeedItem key={drawing.id} drawing={drawing} deleteClicked={deleteClicked} showDeleteButton={showDeleteButton}/>
     )
   });
+
+  let contentArea = <FullScreenPageText pageText='No drawings currently exist'></FullScreenPageText>;
+  if(drawingFeedItems.length){
+    contentArea = (<ListGroup>
+      {drawingFeedItems}
+    </ListGroup>);
+  }
 
   return (
     <>
       <DrawingAppNavbar/>
-      <ListGroup>
-        {drawingFeedItems}
-      </ListGroup>
+      {contentArea}
     </>
   );
 }
@@ -67,9 +76,9 @@ function DrawingFeedItem(props){
 
   return (
     <ListGroup.Item>
-      <div class="container">
-        <div class="row">
-          <div class="col-sm-12 col-md-6">
+      <div className="container">
+        <div className="row">
+          <div className="col-sm-12 col-md-6">
             <p>Creation Date & Time:&nbsp;
               <Moment format="MMMM do, yyyy h:mmA">
                 {props.drawing.createdAt}
@@ -80,7 +89,7 @@ function DrawingFeedItem(props){
             <p>User Email: {props.drawing.user.email}</p>
             {deleteButton}
           </div>
-          <div class="col-sm-12 col-md-6">
+          <div className="col-sm-12 col-md-6">
             <DrawArea strokes={frontEndStrokes} isThumbnail={true} sideLength="100px"/>
           </div>
         </div>

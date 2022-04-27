@@ -13,11 +13,6 @@ export default function Home() {
           </Link>
         </li>
         <li>
-          <Link href="/Login">
-            <a>Login</a>
-          </Link>
-        </li>
-        <li>
           <Link href="/Create">
             <a>Create</a>
           </Link>
