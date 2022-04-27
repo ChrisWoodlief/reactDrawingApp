@@ -8,7 +8,7 @@ import DrawArea from '../components/drawArea';
 export default function DrawPage(){
 
   const [currentDrawing, setCurrentDrawing] = useState(null);
-  const [currentColor, setCurrentColor] = useState('black');
+  const [currentColor, setCurrentColor] = useState();
   const [currentWidth, setCurrentWidth] = useState();
   const [firstStrokeTime, setFirstStrokeTime] = useState(null);
   const [strokes, setStrokes] = useState(new Immutable.List());
@@ -43,19 +43,8 @@ export default function DrawPage(){
     setCurrentDrawing(data.drawing);
   }
 
-  function addStroke(newStroke){
-    setStrokes((prevStrokes) => {
-      return prevStrokes.push(newStroke);
-    });
-  }
-
-  function addPoint(newPoint){
-    setStrokes((prevStrokes) => {
-      return prevStrokes.updateIn([prevStrokes.size - 1], (line) => {
-        line.points = line.points.push(newPoint);
-        return line;
-      });
-    });
+  function updateStrokes(updatedStrokes){
+    setStrokes(updatedStrokes);
   }
 
   function colorUpdated(updatedColor){
@@ -79,7 +68,7 @@ export default function DrawPage(){
   return (
     <>
       <AuthButton/>
-      <DrawArea currentColor={currentColor} currentWidth={currentWidth} strokes={strokes} addStroke={addStroke} addPoint={addPoint} firstStrokeTime={firstStrokeTime} firstStrokeTimeUpdated={firstStrokeTimeUpdated} />
+      <DrawArea currentColor={currentColor} currentWidth={currentWidth} strokes={strokes} updateStrokes={updateStrokes} firstStrokeTime={firstStrokeTime} firstStrokeTimeUpdated={firstStrokeTimeUpdated} />
       <div className="drawPageActionsArea">
         <ColorSelector colorUpdated={colorUpdated} currentColor={currentColor}/>
         <WidthSelector widthUpdated={widthUpdated} currentWidth={currentWidth}/>

@@ -68,16 +68,24 @@ function DrawingFeedItem(props){
 
   return (
     <ListGroup.Item>
-      <p>Creation Date and Time:&nbsp;
-        <Moment format="MMMM do, yyyy h:mmA">
-          {props.drawing.createdAt}
-        </Moment>
-      </p>
-      <p>Draw Time: {msToTime(props.drawing.drawTimeMS)}</p>
-      <p>User Name: {props.drawing.user.name}</p>
-      <p>User Email: {props.drawing.user.email}</p>
-      <DrawArea strokes={frontEndStrokes} isThumbnail={true} sideLength="100px"/>
-      {deleteButton}
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <p>Creation Date & Time:&nbsp;
+              <Moment format="MMMM do, yyyy h:mmA">
+                {props.drawing.createdAt}
+              </Moment>
+            </p>
+            <p>Draw Time: {msToTime(props.drawing.drawTimeMS)}</p>
+            <p>User Name: {props.drawing.user.name}</p>
+            <p>User Email: {props.drawing.user.email}</p>
+            {deleteButton}
+          </div>
+          <div class="col-sm-12 col-md-6">
+            <DrawArea strokes={frontEndStrokes} isThumbnail={true} sideLength="100px"/>
+          </div>
+        </div>
+      </div>
     </ListGroup.Item>
   )
 }

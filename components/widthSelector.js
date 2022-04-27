@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
-let widths = ['2px', '5px', '10px', '20px'];
+let widths = ['3', '6', '12', '24'];
 
 export default function WidthSelector(props){
 
   if(!props.currentWidth){
-    props.widthUpdated('5px');
+    props.widthUpdated('6');
   }
 
   function handleClick(event){

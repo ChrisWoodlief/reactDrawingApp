@@ -1,5 +1,7 @@
 import Immutable from 'Immutable';
 
+export const DRAW_AREA_ERASER_STRING = 'ERASER';
+
 export function msToTime(s) {
   // Pad to 2 or 3 digits, default is 2
   function pad(n, z) {
@@ -46,4 +48,12 @@ export function translateServerStrokesToFrontEnd(serverStrokes){
     returnList = returnList.push({points: pointsList, color: serverStroke.strokeColor, width: serverStroke.strokeWidth});
   });
   return returnList;
+}
+
+//calculate distance between two points using pythagoras theorem
+export function distanceBetweenTwoPoints(x1, y1, x2, y2){
+  const a = x1 - x2;
+  const b = y1 - y2;
+
+  return Math.sqrt(a*a + b*b);
 }

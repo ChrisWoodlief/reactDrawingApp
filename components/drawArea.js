@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import Immutable from 'Immutable';
+import {DRAW_AREA_ERASER_STRING, distanceBetweenTwoPoints} from '../helpers/frontEndHelpers';
 
 /** strokes
 {
@@ -13,18 +14,38 @@ export default function DrawArea(props) {
   const [currentPointCount, setCurrentPointCount] = useState(0);
   const drawAreaRef = useRef(null);
 
+  function deleteLinesTouchingPoint(x, y){
+    const updatedStrokes = props.strokes.filter((currentStroke) => {
+      //Returns true if at least one of the points in the stoke is the stroke width away from the eraser point
+      return !currentStroke.points.some((currentPoint) => {
+        const pointX = currentPoint.get('x');
+        const pointY = currentPoint.get('y');
+        const pixelsBetween = distanceBetweenTwoPoints(x, y, pointX, pointY);
+        console.log(`pixelsBetween: ${pixelsBetween} - currentStroke.width/2: ${currentStroke.width/2}`);
+        if(pixelsBetween <= (currentStroke.width/2) + 1){ //plus one pixel to add a little extra room to erase
+          return true;
+        }
+      });
+    });
+    props.updateStrokes(updatedStrokes)
+  }
+
   function handleMouseDown(mouseEvent) {
     if (mouseEvent.button != 0) {
       return;
     }
 
     const point = relativeCoordinatesForEvent(mouseEvent);
+    setIsDrawing(true);
+    if(props.currentColor == DRAW_AREA_ERASER_STRING){
+      deleteLinesTouchingPoint(point.get('x'), point.get('y'));
+      return;
+    }
 
     if(props.strokes.size == 0){
       props.firstStrokeTimeUpdated(Date.now());
     }
-    setIsDrawing(true);
-    props.addStroke({points: new Immutable.List([point]), color: props.currentColor, width: props.currentWidth});
+    props.updateStrokes(props.strokes.push({points: new Immutable.List([point]), color: props.currentColor, width: props.currentWidth}));
   }
 
   function handleMouseMove(mouseEvent) {
@@ -33,8 +54,15 @@ export default function DrawArea(props) {
     }
 
     const point = relativeCoordinatesForEvent(mouseEvent);
+    if(props.currentColor == DRAW_AREA_ERASER_STRING){
+      deleteLinesTouchingPoint(point.get('x'), point.get('y'));
+      return;
+    }
 
-    props.addPoint(point);
+    props.updateStrokes(props.strokes.updateIn([props.strokes.size - 1], (line) => {
+      line.points = line.points.push(point);
+      return line;
+    }));
     setCurrentPointCount((lastPointCount) => {
       return lastPointCount + 1;
     })
