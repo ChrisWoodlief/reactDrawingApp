@@ -2,6 +2,7 @@
 
 import { PrismaClient, Prisma } from '@prisma/client';
 import { getSession } from "next-auth/react"
+import bcrypt from 'bcrypt';
 
 export default async function handler(req, res) {
   const session = await getSession({ req })
@@ -11,13 +12,17 @@ export default async function handler(req, res) {
     return res.status(400).json({errorMessage: 'Name, email and password are required'});
   }
 
+  //hash password from user
+  const salt = bcrypt.genSaltSync(5); //5 salt rounds
+  const hash = bcrypt.hashSync(req.body.password, salt);
+
   try {
     // Create a user
     await prisma.user.create({
       data: {
         email: req.body.email,
         name: req.body.name,
-        password: req.body.password
+        password: hash
       },
     });
   } catch (e) {

@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from 'bcrypt';
 
 const TA_BASE_URL = 'localhost:3000';
 
@@ -33,6 +34,9 @@ export default NextAuth({
           }
         });
 
+        if(!bcrypt.compareSync(credentials.password, userById.password)){
+          return null;
+        }
 
         // If no error and we have user data, return it
         if (userById) {
