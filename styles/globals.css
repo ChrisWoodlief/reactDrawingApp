@@ -54,3 +54,7 @@ a {
 .italic {
   font-style: italic;
 }
+
+.notSignedInAreaOnCreate{
+  margin-top:50px;
+}

@@ -38,6 +38,7 @@ async function logoutClicked(){
 export function DrawingAppNavbar() {
   const { data: session } = useSession();
   let [navbarTitleText, setNavbarTitleText] = useState('');
+  let [pathname, setPathname] = useState('');
   useEffect(() => {
     if(window.location.pathname == '/DrawingFeed'){
       setNavbarTitleText('Drawing Feed 🎨');
@@ -46,6 +47,7 @@ export function DrawingAppNavbar() {
     }else{
       setNavbarTitleText('Drawing App');
     }
+    setPathname(window.location.pathname);
   }, []);
 
   let userAuthSection = (<>
@@ -57,8 +59,18 @@ export function DrawingAppNavbar() {
   if(session){
     userAuthSection = (<>
       <Navbar.Text className='italic'>Signed in as {session.user.email}</Navbar.Text>
-      <Nav.Link><button onClick={() => signOut()}>Sign out</button></Nav.Link>
+      <Nav.Link><Button onClick={() => signOut()}>Sign out</Button></Nav.Link>
     </>);
+  }
+
+  let feedLink = <Nav.Link href="/DrawingFeed">Feed</Nav.Link>;
+  if(pathname == '/DrawingFeed'){
+    feedLink = '';
+  }
+
+  let createLink = <Nav.Link href="/Create">Create drawing</Nav.Link>
+  if(pathname == '/Create'){
+    createLink = '';
   }
 
   return (
@@ -68,8 +80,8 @@ export function DrawingAppNavbar() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="/DrawingFeed">Feed</Nav.Link>
-            <Nav.Link href="/Create">Create drawing</Nav.Link>
+            {feedLink}
+            {createLink}
           </Nav>
         </Navbar.Collapse>
         <Navbar.Collapse className="justify-content-end">

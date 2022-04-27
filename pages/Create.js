@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { getSession } from 'next-auth/react';
 import Immutable from 'Immutable';
 import {DrawingAppNavbar} from './Login.js';
 import ColorSelector from '../components/colorSelector';
@@ -6,7 +7,7 @@ import WidthSelector from '../components/widthSelector';
 import DrawArea from '../components/drawArea';
 import Button from 'react-bootstrap/Button';
 
-export default function DrawPage(){
+export default function DrawPage(props){
 
   const [currentDrawing, setCurrentDrawing] = useState(null);
   const [currentColor, setCurrentColor] = useState();
@@ -60,15 +61,23 @@ export default function DrawPage(){
     setFirstStrokeTime(updatedFirstStrokeTime);
   }
 
-  let currentDrawingInfo;
-  if(currentDrawing){
-    currentDrawingInfo = <div>Drawing is on server. ID: {currentDrawing.id}</div>;
-  }else{
-    currentDrawingInfo = <div>Drawing is not uploaded to server</div>;
-  }
-  return (
-    <>
-      <DrawingAppNavbar/>
+  let contentArea =(<>
+    <div class="container notSignedInAreaOnCreate">
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <h4>Please sign in or register in the navigation bar to create drawings</h4>
+        </div>
+      </div>
+    </div>
+  </>);
+  if(props.user){
+    let currentDrawingInfo;
+    if(currentDrawing){
+      currentDrawingInfo = <div>Drawing is on server. ID: {currentDrawing.id}</div>;
+    }else{
+      currentDrawingInfo = <div>Drawing is not uploaded to server</div>;
+    }
+    contentArea = (<>
       <DrawArea currentColor={currentColor} currentWidth={currentWidth} strokes={strokes} updateStrokes={updateStrokes} firstStrokeTime={firstStrokeTime} firstStrokeTimeUpdated={firstStrokeTimeUpdated} />
       <div className="drawPageActionsArea">
         <ColorSelector colorUpdated={colorUpdated} currentColor={currentColor}/>
@@ -76,6 +85,26 @@ export default function DrawPage(){
         <Button onClick={saveDrawing}>Save Drawing</Button>
         {currentDrawingInfo}
       </div>
+    </>);
+  }
+
+  return (
+    <>
+      <DrawingAppNavbar/>
+      {contentArea}
     </>
   )
+}
+
+export async function getServerSideProps(ctx) {
+  const session = await getSession(ctx)
+  if (!session) {
+    return {
+      props: {}
+    }
+  }
+  const { user, userId } = session;
+  return {
+    props: { user, signedInUserId: userId },
+  }
 }
