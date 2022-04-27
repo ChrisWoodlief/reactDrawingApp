@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getSession, useSession} from "next-auth/react"
-import {AuthButton} from './Login.js'
+import {DrawingAppNavbar} from './Login.js'
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button'
 import {msToTime, translateServerStrokesToFrontEnd} from '../helpers/frontEndHelpers'
@@ -50,8 +50,7 @@ export default function DrawingFeed(props) {
 
   return (
     <>
-      <AuthButton/>
-      <div>Drawing Feed</div>
+      <DrawingAppNavbar/>
       <ListGroup>
         {drawingFeedItems}
       </ListGroup>

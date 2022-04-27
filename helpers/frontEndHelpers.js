@@ -1,6 +1,6 @@
 import Immutable from 'Immutable';
 
-export const DRAW_AREA_ERASER_STRING = 'ERASER';
+export const DRAW_AREA_ERASER_STRING = 'Eraser';
 
 export function msToTime(s) {
   // Pad to 2 or 3 digits, default is 2
