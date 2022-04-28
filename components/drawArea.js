@@ -86,7 +86,7 @@ export default function DrawArea(props) {
   }
 
   useEffect(() => {
-    if(props.isThumbnail){ // Thumbnails do not need mouse events since they are not editable
+    if(props.isThumbnail || props.disableDrawing){ // Thumbnails do not need mouse events since they are not editable
       return;
     }
     document.addEventListener("mouseup", handleMouseUp);
@@ -96,7 +96,7 @@ export default function DrawArea(props) {
   });
 
   // Thumbnails do not need mouse events since they are not editable
-  const mouseEventProps = !props.isThumbnail ? {
+  const mouseEventProps = !props.isThumbnail && !props.disableDrawing ? {
     onMouseDown: handleMouseDown,
     onMouseMove: handleMouseMove
   }: {};

@@ -18,6 +18,7 @@ export default function DrawPage(props){
   const [currentColor, setCurrentColor] = useState();
   const [currentWidth, setCurrentWidth] = useState();
   const [firstStrokeTime, setFirstStrokeTime] = useState(null);
+  const [disableDrawing, setDisableDrawing] = useState(false);
   const [privateChecked, setPrivateChecked] = useState(false);
   const [strokes, setStrokes] = useState(new Immutable.List());
   const router = useRouter();
@@ -37,6 +38,7 @@ export default function DrawPage(props){
         setCurrentDrawing(data.drawing);
         let frontEndStrokes = translateServerStrokesToFrontEnd(data.drawing.strokes);
         setStrokes(frontEndStrokes);
+        setDisableDrawing(true);
       }
     }
     fetchDrawing();
@@ -70,6 +72,7 @@ export default function DrawPage(props){
     });
     const data = await response.json();
     setCurrentDrawing(data.drawing);
+    setDisableDrawing(true);
   }
 
   function updateStrokes(updatedStrokes){
@@ -123,7 +126,7 @@ export default function DrawPage(props){
     }
 
     contentArea = (<>
-      <DrawArea currentColor={currentColor} currentWidth={currentWidth} strokes={strokes} updateStrokes={updateStrokes} firstStrokeTime={firstStrokeTime} firstStrokeTimeUpdated={firstStrokeTimeUpdated} />
+      <DrawArea disableDrawing={disableDrawing} currentColor={currentColor} currentWidth={currentWidth} strokes={strokes} updateStrokes={updateStrokes} firstStrokeTime={firstStrokeTime} firstStrokeTimeUpdated={firstStrokeTimeUpdated} />
       <div className="drawPageActionsArea">
         {actionsOrInfoArea}
       </div>
