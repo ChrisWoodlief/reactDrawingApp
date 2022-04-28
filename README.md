@@ -33,8 +33,11 @@ In a production application where there is more data and the server could take l
 ### Better Erroring
 In "Register.js" I have added code in the frontend to pass errors along to users in the UI. It would be nice to have this kind of logic throughout the application. "Error Boundaries" in react might be useful as well to catch unexpected errors in the frontend.
 
-### Transactions
+### SQL Transactions
 It would have been nice to take some time to see how Prisma ORM handles transactions. A transaction could have been used in /saveDrawing to ensure a drawing is not created without strokes.
+
+### Better Erasing
+The lines generated can have sparse points depending on things such as how fast the lines are draw. This causes erasing on thinner lines to be more difficult. Instead of always detecting strokes to erase by points I think it could be better to implement an algorithm to detect if the eraser brush line crosses with the line to erase.
 
 ## How to run
 1. Run a Postgres database
