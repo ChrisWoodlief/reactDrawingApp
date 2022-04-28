@@ -2,16 +2,17 @@ import React, { useEffect, useState, useRef } from "react";
 import Immutable from 'Immutable';
 import {DRAW_AREA_ERASER_STRING, distanceBetweenTwoPoints} from '../helpers/frontEndHelpers';
 
-/** strokes
-{
-  points,
-  color,
-  width
-}
+/**
+  props.strokes = Immutable.List[
+    {
+      points: new Immutable.List[{new Immutable.Map('x', 'y')}]
+      color,
+      width
+    }
+  ]
 **/
 export default function DrawArea(props) {
   const [isDrawing, setIsDrawing] = useState(false);
-  const [currentPointCount, setCurrentPointCount] = useState(0);
   const drawAreaRef = useRef(null);
 
   function deleteLinesTouchingPoint(x, y){
@@ -58,13 +59,12 @@ export default function DrawArea(props) {
       return;
     }
 
+    //Add a new stroke and then clone the array, clone is used so react detects a change and updated the UI
     props.updateStrokes(props.strokes.updateIn([props.strokes.size - 1], (line) => {
       line.points = line.points.push(point);
       return line;
-    }));
-    setCurrentPointCount((lastPointCount) => {
-      return lastPointCount + 1;
-    })
+    }).filter(() => {return true;}));
+
   }
 
   function handleMouseUp() {
@@ -102,7 +102,6 @@ export default function DrawArea(props) {
       {...mouseEventProps}
     >
       <Drawing
-        key={currentPointCount}
         strokes={props.strokes}
         isThumbnail={props.isThumbnail}
       />
@@ -110,7 +109,7 @@ export default function DrawArea(props) {
   );
 }
 
-function Drawing({ strokes, isThumbnail, sideLength}) {
+function Drawing({ strokes, isThumbnail }) {
   //The svg gets certain props to change the size correctly if it is a thumbnail
   const svgProps = isThumbnail ? {
     viewBox: "0 0 300 300", //update these numbers if the original image size were to change in .innerDrawing css

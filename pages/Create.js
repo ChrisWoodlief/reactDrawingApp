@@ -138,6 +138,7 @@ export default function DrawPage(props){
   )
 }
 
+//passing in props about the session from the server side
 export async function getServerSideProps(ctx) {
   const session = await getSession(ctx)
   if (!session) {

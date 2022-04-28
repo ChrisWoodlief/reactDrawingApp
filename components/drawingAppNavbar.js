@@ -34,11 +34,11 @@ export function DrawingAppNavbar() {
     </>);
   }
 
+  //Hide nav item for current page
   let feedLink = <Nav.Link href="/DrawingFeed">Feed</Nav.Link>;
   if(pathname == '/DrawingFeed'){
     feedLink = '';
   }
-
   let createLink = <Nav.Link href="/Create">Create drawing</Nav.Link>
   if(pathname == '/Create'){
     createLink = '';

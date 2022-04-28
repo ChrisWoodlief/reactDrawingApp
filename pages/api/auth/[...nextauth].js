@@ -34,6 +34,10 @@ export default NextAuth({
           }
         });
 
+        if(!userById){
+          return null;
+        }
+
         if(!bcrypt.compareSync(credentials.password, userById.password)){
           return null;
         }
@@ -52,9 +56,9 @@ export default NextAuth({
       },
     })
   ],
-  pages: {
-    //signIn: "/Login",
-  },
+  // pages: {
+  //   //signIn: "/Login",
+  // },
   session: {
     maxAge: 30 * 24 * 60 * 60,
     strategy: "jwt",
@@ -66,7 +70,7 @@ export default NextAuth({
   callbacks: {
     async session({ session, token, user }) {
       session.ta_token = token.ta_token;
-      session.userId = token.sub; //todo look into why the id is on the token as "sub"
+      session.userId = token.sub; //The id is on the token as "sub"
       return session;
     },
     async jwt({ token, user }) {

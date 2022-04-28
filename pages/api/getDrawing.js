@@ -12,7 +12,12 @@ export default async function handler(req, res) {
     },
     include: {
       strokes: true,
-      user: true //todochris return user without the password, only necessary data
+      user: { //Use select when including users so no passwords are shared!
+        select: {
+          name: true,
+          email: true
+        }
+      }
     }
   });
 

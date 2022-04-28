@@ -2,6 +2,7 @@ import Immutable from 'Immutable';
 
 export const DRAW_AREA_ERASER_STRING = 'Eraser';
 
+//Convert ms to a nice to read string duration
 export function msToTime(s) {
   // Pad to 2 or 3 digits, default is 2
   function pad(n, z) {

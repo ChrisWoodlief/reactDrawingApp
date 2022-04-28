@@ -71,7 +71,7 @@ function DrawingFeedItem(props){
   let frontEndStrokes = translateServerStrokesToFrontEnd(props.drawing.strokes);
   let deleteButton;
   if(props.showDeleteButton){
-    deleteButton = <Button variant="danger" value={props.drawing.id} onClick={(event) => {props.deleteClicked(event.target.value)}}>Delete Drawing</Button>;
+    deleteButton = <div className='marginTop20'><Button variant="danger" value={props.drawing.id} onClick={(event) => {props.deleteClicked(event.target.value)}}>Delete Drawing</Button></div>;
   }
 
   return (
@@ -87,10 +87,11 @@ function DrawingFeedItem(props){
             <p>Draw Time: {msToTime(props.drawing.drawTimeMS)}</p>
             <p>User Name: {props.drawing.user.name}</p>
             <p>User Email: {props.drawing.user.email}</p>
+            View url: <a href={`/Create?drawingId=${props.drawing.id}`}>Click here</a>
             {deleteButton}
           </div>
           <div className="col-sm-12 col-md-6">
-            <DrawArea strokes={frontEndStrokes} isThumbnail={true} sideLength="100px"/>
+            <DrawArea strokes={frontEndStrokes} isThumbnail={true}/>
           </div>
         </div>
       </div>
@@ -99,7 +100,7 @@ function DrawingFeedItem(props){
 }
 
 
-
+//passing in props about the session from the server side
 export async function getServerSideProps(ctx) {
   const session = await getSession(ctx)
   if (!session) {
