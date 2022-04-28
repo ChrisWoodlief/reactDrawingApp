@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { getSession } from 'next-auth/react';
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
 import Immutable from 'Immutable';
 import {DrawingAppNavbar} from '../components/drawingAppNavbar.js';
 import FullScreenPageText from '../components/fullScreenPageText';

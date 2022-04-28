@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { signIn, signOut, getCsrfToken, useSession, getSession } from 'next-auth/react';
 import Navbar from 'react-bootstrap/Navbar';
@@ -35,14 +35,8 @@ export function DrawingAppNavbar() {
   }
 
   //Hide nav item for current page
-  let feedLink = <Nav.Link href="/DrawingFeed">Feed</Nav.Link>;
-  if(pathname == '/DrawingFeed'){
-    feedLink = '';
-  }
-  let createLink = <Nav.Link href="/Create">Create drawing</Nav.Link>
-  if(pathname == '/Create'){
-    createLink = '';
-  }
+  const feedLink = pathname == '/DrawingFeed' ? '' : <Nav.Link href="/DrawingFeed">Feed</Nav.Link>;
+  let createLink = pathname == '/Create' ? '' : <Nav.Link href="/Create">Create drawing</Nav.Link>;
 
   return (
     <Navbar bg="light" expand="lg">

@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from 'react';
 import Immutable from 'Immutable';
 import {DRAW_AREA_ERASER_STRING, distanceBetweenTwoPoints} from '../helpers/frontEndHelpers';
 
 /**
+  Strokes Data Structure:
   props.strokes = Immutable.List[
     {
       points: new Immutable.List[{new Immutable.Map('x', 'y')}]
@@ -10,6 +11,11 @@ import {DRAW_AREA_ERASER_STRING, distanceBetweenTwoPoints} from '../helpers/fron
       width
     }
   ]
+**/
+
+
+/**
+  The DrawArea can take in strokes to populate a canvas with an existing drawing or start empty and be drawn on
 **/
 export default function DrawArea(props) {
   const [isDrawing, setIsDrawing] = useState(false);
@@ -80,7 +86,7 @@ export default function DrawArea(props) {
   }
 
   useEffect(() => {
-    if(props.isThumbnail){ //thumbnails do not need mouse events since they are not editable
+    if(props.isThumbnail){ // Thumbnails do not need mouse events since they are not editable
       return;
     }
     document.addEventListener("mouseup", handleMouseUp);
@@ -89,7 +95,7 @@ export default function DrawArea(props) {
     };
   });
 
-  //thumbnails do not need mouse events since they are not editable
+  // Thumbnails do not need mouse events since they are not editable
   const mouseEventProps = !props.isThumbnail ? {
     onMouseDown: handleMouseDown,
     onMouseMove: handleMouseMove
@@ -110,9 +116,9 @@ export default function DrawArea(props) {
 }
 
 function Drawing({ strokes, isThumbnail }) {
-  //The svg gets certain props to change the size correctly if it is a thumbnail
+  // The svg gets certain props to change the size correctly if it is a thumbnail
   const svgProps = isThumbnail ? {
-    viewBox: "0 0 300 300", //update these numbers if the original image size were to change in .innerDrawing css
+    viewBox: "0 0 300 300", // Update these numbers if the original image size were to change in .innerDrawing css
     preserveAspectRatio: "xMidYMid meet"
   } : {};
   return (

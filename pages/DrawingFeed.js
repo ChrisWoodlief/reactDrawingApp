@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { getSession, useSession} from "next-auth/react"
+import { getSession, useSession} from 'next-auth/react';
 import {DrawingAppNavbar} from '../components/drawingAppNavbar.js';
 import FullScreenPageText from '../components/fullScreenPageText.js';
 import ListGroup from 'react-bootstrap/ListGroup';
-import Button from 'react-bootstrap/Button'
-import {msToTime, translateServerStrokesToFrontEnd} from '../helpers/frontEndHelpers'
+import Button from 'react-bootstrap/Button';
+import {msToTime, translateServerStrokesToFrontEnd} from '../helpers/frontEndHelpers';
 import Moment from 'react-moment';
 import 'moment-timezone';
-import DrawArea from '../components/drawArea'
+import DrawArea from '../components/drawArea';
 import Immutable from 'Immutable';
 
 export default function DrawingFeed(props) {
@@ -100,7 +100,7 @@ function DrawingFeedItem(props){
 }
 
 
-//passing in props about the session from the server side
+// Passing in props about the session from the server side
 export async function getServerSideProps(ctx) {
   const session = await getSession(ctx)
   if (!session) {
